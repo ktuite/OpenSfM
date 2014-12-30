@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import os
 from subprocess import call, Popen, PIPE
 import numpy as np
 from numpy.linalg import qr
@@ -233,7 +233,9 @@ def two_view_reconstruction(p1, p2, d1, d2, config):
     for l in np.hstack((p1, p2)):
         s += ' '.join(str(i) for i in l) + '\n'
 
-    params = [context.TWO_VIEW_RECONSTRUCTION,
+    two_view_reconstruction_bin = os.path.join(config.get('opensfm_lib_path',''), context.TWO_VIEW_RECONSTRUCTION)
+
+    params = [two_view_reconstruction_bin,
               '-threshold', str(config['five_point_algo_threshold']),
               '-focal1', d1['focal_ratio'] * np.max([d1['width'], d1['height']]),
               '-width1', d1['width'],

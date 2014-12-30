@@ -192,7 +192,7 @@ class DataSet:
                 image, track, observation, x, y = line.split('\t')
                 g.add_node(image, bipartite=0)
                 g.add_node(track, bipartite=1)
-                g.add_edge(image, track, feature=(float(x), float(y)))
+                g.add_edge(image, track, feature=(float(x), float(y), int(observation)))
             return g
 
     def reconstruction_file(self):
