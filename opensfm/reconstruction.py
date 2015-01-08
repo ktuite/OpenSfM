@@ -102,7 +102,6 @@ def bootstrap_reconstruction(data, graph, im1, im2):
     d1 = data.exif_data(im1)
     d2 = data.exif_data(im2)
     cameras = data.camera_model_data()
-
     tracks, p1, p2 = dataset.common_tracks(graph, im1, im2)
     print 'Number of common tracks', len(tracks)
 
@@ -208,7 +207,7 @@ def reprojection_error(graph, reconstruction):
     for shot_id in reconstruction['shots']:
         for track_id in graph[shot_id]:
             if track_id in reconstruction['points']:
-                observation = graph[shot_id][track_id]['feature']
+                observation = graph[shot_id][track_id]['feature'][0:2]
                 shot = reconstruction['shots'][shot_id]
                 camera = reconstruction['cameras'][shot['camera']]
                 point = reconstruction['points'][track_id]
@@ -221,7 +220,7 @@ def reprojection_error_track(track, graph, reconstruction):
     error = 999999999.
     if track in reconstruction['points']:
         for shot_id in graph[track]:
-            observation = graph[shot_id][track]['feature']
+            observation = graph[shot_id][track]['feature'][0:2]
             if shot_id in reconstruction['shots']:
                 shot = reconstruction['shots'][shot_id]
                 camera = reconstruction['cameras'][shot['camera']]
@@ -241,7 +240,7 @@ def resect(data, graph, reconstruction, shot_id):
     Xs = []
     for track in graph[shot_id]:
         if track in reconstruction['points']:
-            xs.append(graph[shot_id][track]['feature'])
+            xs.append(graph[shot_id][track]['feature'][0:2])
             Xs.append(reconstruction['points'][track]['coordinates'])
     x = np.array(xs)
     X = np.array(Xs)
@@ -305,7 +304,7 @@ def triangulate_track(track, graph, reconstruction, P_by_id, KR1_by_id, Kinv_by_
                 KR1_by_id[shot] = np.linalg.inv(P[:,:3])
                 Kinv_by_id[shot] = np.linalg.inv(multiview.K_from_camera(c))
             Ps_initial.append(P_by_id[shot])
-            xs_initial.append(graph[track][shot]['feature'])
+            xs_initial.append(graph[track][shot]['feature'][0:2])
             KR1_initial.append(KR1_by_id[shot])
             Kinv_initial.append(Kinv_by_id[shot])
     valid_set = []

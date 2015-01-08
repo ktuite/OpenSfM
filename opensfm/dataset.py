@@ -262,8 +262,8 @@ def common_tracks(g, im1, im2):
     tracks, p1, p2 = [], [], []
     for track in t1:
         if track in t2:
-            p1.append(t1[track]['feature'])
-            p2.append(t2[track]['feature'])
+            p1.append(t1[track]['feature'][0:2])
+            p2.append(t2[track]['feature'][0:2])
             tracks.append(track)
     p1 = np.array(p1)
     p2 = np.array(p2)
