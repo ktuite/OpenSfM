@@ -43,6 +43,22 @@ if __name__ == "__main__":
         io.mkdir_p(os.path.join(output_path, "txt"))
         io.mkdir_p(os.path.join(output_path, "models"))
 
+        # "resize" images... by changing camera width/height in reconstruction
+        max_size = 1200
+        for ci, camera in reconstruction["cameras"].items():
+            print "Resizing", ci, camera
+            focal = camera["focal"]
+            width = camera["width"]
+            height = camera["height"]
+            resize_ratio = float(max_size) / max(width, height)
+            print "Resize ratio:", resize_ratio
+
+            #reconstruction["cameras"][ci]["focal"] = focal*resize_ratio
+            reconstruction["cameras"][ci]["width"] = int(width*resize_ratio)
+            reconstruction["cameras"][ci]["height"] = int(height*resize_ratio)
+
+            print reconstruction["cameras"][ci]
+
         shot_index = { image: i for i, image in enumerate(reconstruction["shots"]) }
 
         fvis = open(os.path.join(output_path, "vis.dat"), "w")
@@ -104,6 +120,7 @@ if __name__ == "__main__":
             camera_matrix[1][2] = camera["height"]/2.0
             k1 = camera["k1"]
             k2 = camera["k2"]
+            im = cv2.resize(im, dsize=(camera["width"], camera["height"]))
             im = cv2.undistort(im, camera_matrix, np.array([k1, k2, 0, 0]))
             cv2.imwrite(new_image, im)
 
